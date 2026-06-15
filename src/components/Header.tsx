@@ -50,7 +50,7 @@ export default function Header({
         </a>
 
         {/* Desktop Navigation */}
-        <nav className="hidden xl:flex items-center gap-5">
+        <nav className="hidden lg:flex items-center gap-5">
           <a
             href="#/"
             id="nav-home"
@@ -104,7 +104,7 @@ export default function Header({
         </div>
 
         {/* Mobile Hamburger menu */}
-        <div className="xl:hidden flex items-center justify-center">
+        <div className="lg:hidden flex items-center justify-center">
           <button
             id="mobile-menu-btn"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -118,7 +118,7 @@ export default function Header({
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="xl:hidden bg-white border-t border-[#c3c6d7]/30 shadow-lg absolute left-0 w-full px-4 py-6 z-50">
+        <div className="lg:hidden bg-white border-t border-[#c3c6d7]/30 shadow-lg absolute left-0 w-full px-4 py-6 z-50">
           <div className="flex flex-col gap-4">
             <a
               href="#/"
