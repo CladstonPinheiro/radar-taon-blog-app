@@ -11,10 +11,11 @@ import HomePage from "./components/HomePage";
 import CategoryPage from "./components/CategoryPage";
 import PostDetailPage from "./components/PostDetailPage";
 import LoginPage from "./components/LoginPage";
+import EditorPage from "./components/EditorPage";
 import { Category, MOCK_POSTS, slugToCategory, categoryToSlug } from "./types";
 
 interface NavState {
-  page: "home" | "category" | "post" | "login";
+  page: "home" | "category" | "post" | "login" | "editor";
   category: Category | null;
   postId: string | null;
 }
@@ -28,69 +29,58 @@ export default function App() {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Hash-based router synchronization
   useEffect(() => {
     const parseHash = () => {
       const hash = window.location.hash || "#/";
-      
+
       if (hash === "#/" || hash === "") {
         setNavState({ page: "home", category: null, postId: null });
         return;
       }
 
-      // Pattern: #/categoria/:nome
+      if (hash === "#/login") {
+        setNavState({ page: "login", category: null, postId: null });
+        return;
+      }
+
+      if (hash === "#/editor") {
+        setNavState({ page: "editor", category: null, postId: null });
+        return;
+      }
+
       const categoryMatch = hash.match(/^#\/categoria\/([^/]+)$/);
       if (categoryMatch) {
-         const categorySlug = categoryMatch[1];
-         const matchedCategory = slugToCategory(categorySlug);
-         if (matchedCategory) {
-            setNavState({ page: "category", category: matchedCategory, postId: null });
-            return;
-         }
+        const categorySlug = categoryMatch[1];
+        const matchedCategory = slugToCategory(categorySlug);
+        if (matchedCategory) {
+          setNavState({ page: "category", category: matchedCategory, postId: null });
+          return;
+        }
       }
 
-      // Pattern: #/login
-      if (hash === "#/login") {
-        setNavState({ page: "login", category: null, postId: null });
-        return;
-      }
-
-      // Pattern: #/login
-      if (hash === "#/login") {
-        setNavState({ page: "login", category: null, postId: null });
-        return;
-      }
-
-      // Pattern: #/post/:id
       const postMatch = hash.match(/^#\/post\/([^/]+)$/);
       if (postMatch) {
-         const postId = postMatch[1];
-         setNavState({ page: "post", category: null, postId: postId });
-         return;
+        const postId = postMatch[1];
+        setNavState({ page: "post", category: null, postId: postId });
+        return;
       }
 
-      // Default fallback
       setNavState({ page: "home", category: null, postId: null });
     };
 
-    // Initial parse on load
     parseHash();
-
-    // Listen to hash shifts
     window.addEventListener("hashchange", parseHash);
     return () => {
       window.removeEventListener("hashchange", parseHash);
     };
   }, []);
 
-  // Set URL Hash manually for safe history tracking
   const handleNavigateHome = () => {
-    setSearchQuery(""); // Clear search on explicit Home navigation
+    setSearchQuery("");
     window.location.hash = "#/";
   };
 
   const handleNavigateCategory = (cat: Category) => {
-    // Clear search query so that user can browse selected category properly
     setSearchQuery("");
     window.location.hash = `#/categoria/${categoryToSlug(cat)}`;
   };
@@ -99,7 +89,6 @@ export default function App() {
     window.location.hash = `#/post/${postId}`;
   };
 
-  // Safe search interception: if user searches, scroll to top and ensure they see answers
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
     if (navState.page !== "home" && query.trim().length > 0) {
@@ -107,7 +96,6 @@ export default function App() {
     }
   };
 
-  // Determine current active category for Header's visual styling
   const activeCategoryForHeader = useMemo(() => {
     if (navState.page === "category") {
       return navState.category;
@@ -119,9 +107,10 @@ export default function App() {
     return null;
   }, [navState]);
 
+  const isFullPage = navState.page === "login" || navState.page === "editor";
+
   return (
     <div className="bg-[#F9FAFB] text-[#0e1c2e] min-h-screen flex flex-col antialiased">
-      {/* 1. Header component */}
       <Header
         currentCategory={activeCategoryForHeader}
         currentPage={navState.page}
@@ -129,11 +118,10 @@ export default function App() {
         onNavigateCategory={handleNavigateCategory}
       />
 
-      {/* 2. Main content container grids */}
-      <main className={`flex-grow w-full ${navState.page === "login" ? "" : "max-w-[1280px] mx-auto px-4 md:px-8 py-8 flex flex-col lg:flex-row gap-8"}`}>
-        
-        {/* Left Column (Primary Page Views) */}
-        <div className={`flex-grow flex flex-col gap-8 ${navState.page === "login" ? "" : "lg:max-w-[calc(100%-344px)]"}`}>
+      <main className={`flex-grow w-full ${isFullPage ? "" : "max-w-[1280px] mx-auto px-4 md:px-8 py-8 flex flex-col lg:flex-row gap-8"}`}>
+
+        <div className={`flex-grow flex flex-col gap-8 ${isFullPage ? "" : "lg:max-w-[calc(100%-344px)]"}`}>
+
           {navState.page === "home" && (
             <HomePage
               posts={MOCK_POSTS}
@@ -152,10 +140,6 @@ export default function App() {
             />
           )}
 
-          {navState.page === "login" && (
-            <LoginPage onLoginSuccess={handleNavigateHome} />
-          )}
-
           {navState.page === "post" && navState.postId && (
             <PostDetailPage
               postId={navState.postId}
@@ -164,20 +148,29 @@ export default function App() {
               onNavigatePost={handleNavigatePost}
             />
           )}
+
+          {navState.page === "login" && (
+            <LoginPage onLoginSuccess={() => { window.location.hash = "#/editor"; }} />
+          )}
+
+          {navState.page === "editor" && (
+            <EditorPage onNavigateHome={handleNavigateHome} />
+          )}
+
         </div>
 
-        {/* Right Column (Standard Sidebar Widgets) */}
-        {navState.page !== "login" && <Sidebar
-          searchQuery={searchQuery}
-          onSearch={handleSearchChange}
-          onNavigateCategory={handleNavigateCategory}
-          onNavigatePost={handleNavigatePost}
-          // Hide redundant sidebar newsletter widget on actual detailed posts if want, or keep always
-          hideNewsletter={false}
-        />}
+        {!isFullPage && (
+          <Sidebar
+            searchQuery={searchQuery}
+            onSearch={handleSearchChange}
+            onNavigateCategory={handleNavigateCategory}
+            onNavigatePost={handleNavigatePost}
+            hideNewsletter={false}
+          />
+        )}
+
       </main>
 
-      {/* 3. Footer component */}
       <Footer onNavigateHome={handleNavigateHome} />
     </div>
   );
