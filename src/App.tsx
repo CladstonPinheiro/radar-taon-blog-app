@@ -10,10 +10,11 @@ import Sidebar from "./components/Sidebar";
 import HomePage from "./components/HomePage";
 import CategoryPage from "./components/CategoryPage";
 import PostDetailPage from "./components/PostDetailPage";
+import LoginPage from "./components/LoginPage";
 import { Category, MOCK_POSTS, slugToCategory, categoryToSlug } from "./types";
 
 interface NavState {
-  page: "home" | "category" | "post";
+  page: "home" | "category" | "post" | "login";
   category: Category | null;
   postId: string | null;
 }
@@ -46,6 +47,18 @@ export default function App() {
             setNavState({ page: "category", category: matchedCategory, postId: null });
             return;
          }
+      }
+
+      // Pattern: #/login
+      if (hash === "#/login") {
+        setNavState({ page: "login", category: null, postId: null });
+        return;
+      }
+
+      // Pattern: #/login
+      if (hash === "#/login") {
+        setNavState({ page: "login", category: null, postId: null });
+        return;
       }
 
       // Pattern: #/post/:id
@@ -117,10 +130,10 @@ export default function App() {
       />
 
       {/* 2. Main content container grids */}
-      <main className="flex-grow w-full max-w-[1280px] mx-auto px-4 md:px-8 py-8 flex flex-col lg:flex-row gap-8">
+      <main className={`flex-grow w-full ${navState.page === "login" ? "" : "max-w-[1280px] mx-auto px-4 md:px-8 py-8 flex flex-col lg:flex-row gap-8"}`}>
         
         {/* Left Column (Primary Page Views) */}
-        <div className="flex-grow flex flex-col gap-8 lg:max-w-[calc(100%-344px)]">
+        <div className={`flex-grow flex flex-col gap-8 ${navState.page === "login" ? "" : "lg:max-w-[calc(100%-344px)]"}`}>
           {navState.page === "home" && (
             <HomePage
               posts={MOCK_POSTS}
@@ -139,6 +152,10 @@ export default function App() {
             />
           )}
 
+          {navState.page === "login" && (
+            <LoginPage onLoginSuccess={handleNavigateHome} />
+          )}
+
           {navState.page === "post" && navState.postId && (
             <PostDetailPage
               postId={navState.postId}
@@ -150,14 +167,14 @@ export default function App() {
         </div>
 
         {/* Right Column (Standard Sidebar Widgets) */}
-        <Sidebar
+        {navState.page !== "login" && <Sidebar
           searchQuery={searchQuery}
           onSearch={handleSearchChange}
           onNavigateCategory={handleNavigateCategory}
           onNavigatePost={handleNavigatePost}
           // Hide redundant sidebar newsletter widget on actual detailed posts if want, or keep always
           hideNewsletter={false}
-        />
+        />}
       </main>
 
       {/* 3. Footer component */}
