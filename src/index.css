@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-headline: "Outfit", system-ui, -apple-system, sans-serif;
+  
+  --color-primary: #004ac6;
+  --color-secondary: #a04100;
+  --color-secondary-container: #fc7728;
+}
+
+/* Custom fade-in and micro-animation styles */
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale {
+  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* General body styling adjustments */
+body {
+  background-color: #F9FAFB;
+  color: #0e1c2e;
+}

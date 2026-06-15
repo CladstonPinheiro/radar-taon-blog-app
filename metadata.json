@@ -1,0 +1,6 @@
+{
+  "name": "Radar Tá On",
+  "description": "Um portal moderno de notícias de Brasília e Distrito Federal com vagas de emprego, imóveis, veículos, guia de compras, negócios e muito mais.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
