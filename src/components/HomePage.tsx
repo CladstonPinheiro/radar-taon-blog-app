@@ -7,7 +7,6 @@ import { motion } from "motion/react";
 import { ArrowRight, Calendar, Clock, ArrowUpRight, Newspaper, Briefcase, Home, Car, TrendingUp, ShieldAlert, CalendarRange, Search } from "lucide-react";
 import { BlogPost, Category, getCategoryIcon, categoryToSlug } from "../types";
 import CtaAdBox from "./CtaAdBox";
-import CategoryIconRow from "./CategoryIconRow";
 
 interface HomePageProps {
   posts: BlogPost[];
@@ -86,8 +85,6 @@ export default function HomePage({
         id="search-results-section"
         className="flex-grow flex flex-col gap-6"
       >
-        <CategoryIconRow onNavigateCategory={onNavigateCategory} />
-
         <div className="bg-[#eff3ff] rounded-xl p-6 border border-[#c3c6d7]/10 shadow-sm">
           <h1 className="font-headline-xl text-2xl md:text-3xl text-[#004ac6] flex items-center gap-2 font-bold" style={{ fontFamily: "Outfit, sans-serif" }}>
             <Search className="w-7 h-7 text-[#fc7728]" />
@@ -166,9 +163,6 @@ export default function HomePage({
       animate="visible"
       className="flex-grow flex flex-col gap-8"
     >
-      {/* 0. Category icon row (mirrors taonaltiplano.com.br pattern) */}
-      <CategoryIconRow onNavigateCategory={onNavigateCategory} />
-
       {/* 1. Feature Hero News Card (Matches Design 2) */}
       {featuredPost && (
         <section
