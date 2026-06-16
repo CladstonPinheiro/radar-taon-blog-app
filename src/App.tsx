@@ -219,7 +219,7 @@ export default function App() {
         )}
       </main>
 
-      <Footer onNavigateHome={handleNavigateHome} />
+      <Footer onNavigateHome={handleNavigateHome} onNavigateCategory={handleNavigateCategory} />
     </div>
   );
 }

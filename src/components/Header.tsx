@@ -36,14 +36,14 @@ export default function Header({
   };
 
   return (
-    <header className="bg-white border-b border-[#c3c6d7]/20 sticky top-0 z-50 shadow-sm font-sans">
+    <header className="bg-[#0e1c2e] border-b border-slate-800 sticky top-0 z-50 shadow-sm font-sans">
       <div className="max-w-[1280px] mx-auto px-4 md:px-8 h-20 flex justify-between items-center">
         {/* Brand Logo */}
-        <a 
-          href="#/" 
+        <a
+          href="#/"
           id="header-logo"
           onClick={handleLogoClick}
-          className="font-headline-lg text-2xl md:text-[32px] font-black text-[#004ac6] tracking-tight hover:opacity-90 transition-opacity whitespace-nowrap"
+          className="font-headline-lg text-2xl md:text-[32px] font-black text-white tracking-tight hover:opacity-90 transition-opacity whitespace-nowrap"
           style={{ fontFamily: "Outfit, sans-serif" }}
         >
           Radar Tá On
@@ -60,8 +60,8 @@ export default function Header({
             }}
             className={`font-semibold text-sm transition-colors duration-200 pb-1 ${
               currentPage === "home"
-                ? "text-[#004ac6] border-b-2 border-[#004ac6]"
-                : "text-[#434655] hover:text-[#004ac6]"
+                ? "text-[#60a5fa] border-b-2 border-[#60a5fa]"
+                : "text-slate-300 hover:text-[#60a5fa]"
             }`}
           >
             Início
@@ -77,10 +77,10 @@ export default function Header({
                   e.preventDefault();
                   handleCategoryClick(cat);
                 }}
-                className={`font-semibold text-xs text-[#434655] transition-colors duration-200 pb-1 whitespace-nowrap ${
+                className={`font-semibold text-xs transition-colors duration-200 pb-1 whitespace-nowrap ${
                   isSelected
-                    ? "text-[#004ac6] border-b-2 border-[#004ac6] font-bold"
-                    : "hover:text-[#004ac6]"
+                    ? "text-[#60a5fa] border-b-2 border-[#60a5fa] font-bold"
+                    : "text-slate-300 hover:text-[#60a5fa]"
                 }`}
               >
                 {cat}
@@ -108,7 +108,7 @@ export default function Header({
           <button
             id="mobile-menu-btn"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-3 text-[#004ac6] hover:bg-slate-50 rounded-lg transition-colors focus:outline-none min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="p-3 text-white hover:bg-white/10 rounded-lg transition-colors focus:outline-none min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Abrir menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -118,7 +118,7 @@ export default function Header({
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-[#c3c6d7]/30 shadow-lg absolute left-0 w-full px-4 py-6 z-50">
+        <div className="lg:hidden bg-[#0e1c2e] border-t border-slate-800 shadow-lg absolute left-0 w-full px-4 py-6 z-50">
           <div className="flex flex-col gap-4">
             <a
               href="#/"
@@ -130,15 +130,15 @@ export default function Header({
               }}
               className={`font-bold text-base py-2.5 px-3 rounded-lg transition-colors min-h-[44px] flex items-center ${
                 currentPage === "home"
-                  ? "bg-[#eff3ff] text-[#004ac6]"
-                  : "text-[#434655] hover:bg-slate-50"
+                  ? "bg-white/10 text-[#60a5fa]"
+                  : "text-slate-300 hover:bg-white/5"
               }`}
             >
               Início
             </a>
-            
-            <div className="border-b border-[#c3c6d7]/20 my-1"></div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 px-3">Categorias</p>
+
+            <div className="border-b border-slate-800 my-1"></div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 px-3">Categorias</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {categories.map((cat) => {
@@ -154,8 +154,8 @@ export default function Header({
                     }}
                     className={`text-sm py-2 px-3 rounded-lg font-medium transition-colors min-h-[44px] flex items-center ${
                       isSelected
-                        ? "bg-[#eff3ff] text-[#004ac6] font-semibold"
-                        : "text-[#434655] hover:bg-slate-50"
+                        ? "bg-white/10 text-[#60a5fa] font-semibold"
+                        : "text-slate-300 hover:bg-white/5"
                     }`}
                   >
                     {cat}
@@ -164,7 +164,7 @@ export default function Header({
               })}
             </div>
 
-            <div className="border-b border-[#c3c6d7]/20 my-2"></div>
+            <div className="border-b border-slate-800 my-2"></div>
 
             <a
               href="https://www.taonaltiplano.com.br"
