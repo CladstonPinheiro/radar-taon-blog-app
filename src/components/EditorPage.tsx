@@ -22,8 +22,8 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
   const [imageUploading, setImageUploading] = useState(false);
   const [urgent, setUrgent] = useState(false);
   const [createdVia, setCreatedVia] = useState<"manual" | "ia">("manual");
-  const [status, setStatus] = useState<"rascunho" | "pendente_aprovacao">("rascunho");
   const [loading, setLoading] = useState(false);
+  const [loadingAction, setLoadingAction] = useState<"rascunho" | "pendente_aprovacao" | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiTopic, setAiTopic] = useState("");
   const [showAiModal, setShowAiModal] = useState(false);
@@ -33,14 +33,18 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
   const categories = Object.values(Category);
 
   const generateSlug = (text: string) => {
-    return text
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, "-")
-      .slice(0, 80) + "-" + Date.now();
+    return (
+      text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")
+        .slice(0, 80) +
+      "-" +
+      Date.now()
+    );
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,9 +74,7 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
       return;
     }
 
-    const { data: urlData } = supabase.storage
-      .from("blog-images")
-      .getPublicUrl(fileName);
+    const { data: urlData } = supabase.storage.from("blog-images").getPublicUrl(fileName);
 
     setImageUrl(urlData.publicUrl);
     setImagePreview(urlData.publicUrl);
@@ -103,18 +105,18 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
               role: "user",
               content: `Crie um rascunho de post para o blog "Radar Tá On" sobre o seguinte tema: "${aiTopic}".
               Categoria: ${category}
-              
+
               Responda SOMENTE com um JSON válido no formato:
               {
                 "title": "título do post",
                 "summary": "resumo em 1-2 frases",
                 "content": "conteúdo do post em 3-4 parágrafos"
               }
-              
-              Escreva em português brasileiro, tom informativo e regional (Brasília/DF).`
-            }
-          ]
-        })
+
+              Escreva em português brasileiro, tom informativo e regional (Brasília/DF).`,
+            },
+          ],
+        }),
       });
 
       const data = await response.json();
@@ -134,19 +136,21 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
     setAiLoading(false);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (status: "rascunho" | "pendente_aprovacao") => {
     if (!title.trim() || !summary.trim() || !content.trim()) {
       setMessage({ type: "error", text: "Preencha título, resumo e conteúdo." });
       return;
     }
 
     setLoading(true);
+    setLoadingAction(status);
     setMessage(null);
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       setMessage({ type: "error", text: "Sessão expirada. Faça login novamente." });
       setLoading(false);
+      setLoadingAction(null);
       return;
     }
 
@@ -167,13 +171,17 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
     });
 
     setLoading(false);
+    setLoadingAction(null);
 
     if (error) {
       setMessage({ type: "error", text: "Erro ao salvar post: " + error.message });
       return;
     }
 
-    setMessage({ type: "success", text: status === "rascunho" ? "Rascunho salvo!" : "Post enviado para aprovação!" });
+    setMessage({
+      type: "success",
+      text: status === "rascunho" ? "Rascunho salvo!" : "Post enviado para aprovação!",
+    });
     setTitle("");
     setSummary("");
     setContent("");
@@ -191,7 +199,6 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
 
   return (
     <div className="flex-grow flex flex-col py-8 px-4 md:px-8 max-w-[860px] mx-auto w-full">
-
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-black text-[#004ac6]" style={{ fontFamily: "Outfit, sans-serif" }}>
@@ -210,7 +217,10 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
 
       <div className="flex gap-3 mb-6">
         <button
-          onClick={() => { setCreatedVia("manual"); setMessage(null); }}
+          onClick={() => {
+            setCreatedVia("manual");
+            setMessage(null);
+          }}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold border transition-colors ${
             createdVia === "manual"
               ? "bg-[#004ac6] text-white border-[#004ac6]"
@@ -269,17 +279,18 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
       )}
 
       {message && (
-        <div className={`mb-4 px-4 py-3 rounded-lg text-sm font-medium border ${
-          message.type === "success"
-            ? "bg-green-50 text-green-700 border-green-200"
-            : "bg-red-50 text-red-700 border-red-200"
-        }`}>
+        <div
+          className={`mb-4 px-4 py-3 rounded-lg text-sm font-medium border ${
+            message.type === "success"
+              ? "bg-green-50 text-green-700 border-green-200"
+              : "bg-red-50 text-red-700 border-red-200"
+          }`}
+        >
           {message.text}
         </div>
       )}
 
       <div className="flex flex-col gap-4 bg-white rounded-2xl border border-[#c3c6d7]/30 p-6 shadow-sm">
-
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-semibold text-[#434655]">Título *</label>
           <input
@@ -299,7 +310,9 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
             className="border border-[#c3c6d7] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#004ac6]/30"
           >
             {categories.map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
             ))}
           </select>
         </div>
@@ -374,19 +387,19 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
 
         <div className="flex gap-3 pt-2 border-t border-[#c3c6d7]/20 mt-2">
           <button
-            onClick={() => { setStatus("rascunho"); handleSubmit(); }}
+            onClick={() => handleSubmit("rascunho")}
             disabled={loading}
             className="flex-1 py-2.5 rounded-lg border border-[#c3c6d7] text-sm font-semibold text-[#434655] hover:bg-slate-50 disabled:opacity-50 transition-colors"
           >
-            {loading && status === "rascunho" ? "Salvando..." : "Salvar rascunho"}
+            {loadingAction === "rascunho" ? "Salvando..." : "Salvar rascunho"}
           </button>
           <button
-            onClick={() => { setStatus("pendente_aprovacao"); handleSubmit(); }}
+            onClick={() => handleSubmit("pendente_aprovacao")}
             disabled={loading}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-[#004ac6] hover:bg-[#003a9e] disabled:opacity-50 text-white text-sm font-semibold transition-colors"
           >
             <Send className="w-4 h-4" />
-            {loading && status === "pendente_aprovacao" ? "Enviando..." : "Enviar para aprovação"}
+            {loadingAction === "pendente_aprovacao" ? "Enviando..." : "Enviar para aprovação"}
           </button>
         </div>
       </div>

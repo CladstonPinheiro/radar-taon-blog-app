@@ -12,10 +12,11 @@ import CategoryPage from "./components/CategoryPage";
 import PostDetailPage from "./components/PostDetailPage";
 import LoginPage from "./components/LoginPage";
 import EditorPage from "./components/EditorPage";
+import AdminPage from "./components/AdminPage";
 import { Category, MOCK_POSTS, slugToCategory, categoryToSlug } from "./types";
 
 interface NavState {
-  page: "home" | "category" | "post" | "login" | "editor";
+  page: "home" | "category" | "post" | "login" | "editor" | "admin";
   category: Category | null;
   postId: string | null;
 }
@@ -45,6 +46,11 @@ export default function App() {
 
       if (hash === "#/editor") {
         setNavState({ page: "editor", category: null, postId: null });
+        return;
+      }
+
+      if (hash === "#/admin") {
+        setNavState({ page: "admin", category: null, postId: null });
         return;
       }
 
@@ -107,7 +113,10 @@ export default function App() {
     return null;
   }, [navState]);
 
-  const isFullPage = navState.page === "login" || navState.page === "editor";
+  const isFullPage =
+    navState.page === "login" ||
+    navState.page === "editor" ||
+    navState.page === "admin";
 
   return (
     <div className="bg-[#F9FAFB] text-[#0e1c2e] min-h-screen flex flex-col antialiased">
@@ -118,10 +127,18 @@ export default function App() {
         onNavigateCategory={handleNavigateCategory}
       />
 
-      <main className={`flex-grow w-full ${isFullPage ? "" : "max-w-[1280px] mx-auto px-4 md:px-8 py-8 flex flex-col lg:flex-row gap-8"}`}>
-
-        <div className={`flex-grow flex flex-col gap-8 ${isFullPage ? "" : "lg:max-w-[calc(100%-344px)]"}`}>
-
+      <main
+        className={`flex-grow w-full ${
+          isFullPage
+            ? ""
+            : "max-w-[1280px] mx-auto px-4 md:px-8 py-8 flex flex-col lg:flex-row gap-8"
+        }`}
+      >
+        <div
+          className={`flex-grow flex flex-col gap-8 ${
+            isFullPage ? "" : "lg:max-w-[calc(100%-344px)]"
+          }`}
+        >
           {navState.page === "home" && (
             <HomePage
               posts={MOCK_POSTS}
@@ -150,13 +167,20 @@ export default function App() {
           )}
 
           {navState.page === "login" && (
-            <LoginPage onLoginSuccess={() => { window.location.hash = "#/editor"; }} />
+            <LoginPage
+              onLoginSuccess={() => {
+                window.location.hash = "#/editor";
+              }}
+            />
           )}
 
           {navState.page === "editor" && (
             <EditorPage onNavigateHome={handleNavigateHome} />
           )}
 
+          {navState.page === "admin" && (
+            <AdminPage onNavigateHome={handleNavigateHome} />
+          )}
         </div>
 
         {!isFullPage && (
@@ -168,7 +192,6 @@ export default function App() {
             hideNewsletter={false}
           />
         )}
-
       </main>
 
       <Footer onNavigateHome={handleNavigateHome} />

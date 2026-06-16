@@ -23,19 +23,30 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
     setError(null);
     setLoading(true);
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    setLoading(false);
-
-    if (signInError) {
+    if (signInError || !data.user) {
+      setLoading(false);
       setError("Email ou senha incorretos.");
       return;
     }
 
-    onLoginSuccess();
+    const { data: profile } = await supabase
+      .from("blog_profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
+
+    setLoading(false);
+
+    if (profile?.role === "admin") {
+      window.location.hash = "#/admin";
+    } else {
+      onLoginSuccess();
+    }
   };
 
   return (
@@ -62,7 +73,7 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-[#c3c6d7] rounded-lg px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#004ac6]/30 focus:border-[#004ac6]"
+              className="border border-[#c3c6d7] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#004ac6]/30 focus:border-[#004ac6]"
               placeholder="seu@email.com"
             />
           </div>
@@ -75,11 +86,11 @@ export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-[#c3c6d7] rounded-lg px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#004ac6]/30 focus:border-[#004ac6]"
-              placeholder="••••••••"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border border-[#c3c6d7] rounded-lg px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#004ac6]/30 focus:border-[#004ac6]"
+                placeholder="••••••••"
               />
               <button
                 type="button"
