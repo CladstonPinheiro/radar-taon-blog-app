@@ -13,6 +13,7 @@ import PostDetailPage from "./components/PostDetailPage";
 import LoginPage from "./components/LoginPage";
 import EditorPage from "./components/EditorPage";
 import AdminPage from "./components/AdminPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { Category, MOCK_POSTS, slugToCategory, categoryToSlug } from "./types";
 
 interface NavState {
@@ -175,11 +176,15 @@ export default function App() {
           )}
 
           {navState.page === "editor" && (
-            <EditorPage onNavigateHome={handleNavigateHome} />
+            <ProtectedRoute requiredRole="editor">
+              <EditorPage onNavigateHome={handleNavigateHome} />
+            </ProtectedRoute>
           )}
 
           {navState.page === "admin" && (
-            <AdminPage onNavigateHome={handleNavigateHome} />
+            <ProtectedRoute requiredRole="admin">
+              <AdminPage onNavigateHome={handleNavigateHome} />
+            </ProtectedRoute>
           )}
         </div>
 
