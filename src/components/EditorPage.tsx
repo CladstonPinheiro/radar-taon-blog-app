@@ -94,43 +94,29 @@ export default function EditorPage({ onNavigateHome }: EditorPageProps) {
     setShowAiModal(false);
 
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("/api/generate-content", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          messages: [
-            {
-              role: "user",
-              content: `Crie um rascunho de post para o blog "Radar Tá On" sobre o seguinte tema: "${aiTopic}".
-              Categoria: ${category}
-
-              Responda SOMENTE com um JSON válido no formato:
-              {
-                "title": "título do post",
-                "summary": "resumo em 1-2 frases",
-                "content": "conteúdo do post em 3-4 parágrafos"
-              }
-
-              Escreva em português brasileiro, tom informativo e regional (Brasília/DF).`,
-            },
-          ],
-        }),
+        body: JSON.stringify({ topic: aiTopic, category }),
       });
 
-      const data = await response.json();
-      const text = data.content?.[0]?.text || "";
-      const clean = text.replace(/```json|```/g, "").trim();
-      const parsed = JSON.parse(clean);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Erro ao gerar conteúdo.");
+      }
+
+      const parsed = await response.json();
 
       setTitle(parsed.title || "");
       setSummary(parsed.summary || "");
       setContent(parsed.content || "");
       setCreatedVia("ia");
       setMessage({ type: "success", text: "Rascunho gerado pela IA! Revise antes de enviar." });
-    } catch {
-      setMessage({ type: "error", text: "Erro ao gerar conteúdo. Tente novamente." });
+    } catch (err) {
+      setMessage({
+        type: "error",
+        text: err instanceof Error ? err.message : "Erro ao gerar conteúdo. Tente novamente.",
+      });
     }
 
     setAiLoading(false);
