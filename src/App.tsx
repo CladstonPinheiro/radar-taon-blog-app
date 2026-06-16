@@ -13,12 +13,13 @@ import PostDetailPage from "./components/PostDetailPage";
 import LoginPage from "./components/LoginPage";
 import EditorPage from "./components/EditorPage";
 import AdminPage from "./components/AdminPage";
+import PrivacyPage from "./components/PrivacyPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { fetchPublishedPosts } from "./lib/postsService";
 import { Category, BlogPost, slugToCategory, categoryToSlug } from "./types";
 
 interface NavState {
-  page: "home" | "category" | "post" | "login" | "editor" | "admin";
+  page: "home" | "category" | "post" | "login" | "editor" | "admin" | "privacidade";
   category: Category | null;
   postId: string | null;
 }
@@ -68,6 +69,11 @@ export default function App() {
         return;
       }
 
+      if (hash === "#/privacidade") {
+        setNavState({ page: "privacidade", category: null, postId: null });
+        return;
+      }
+
       const categoryMatch = hash.match(/^#\/categoria\/([^/]+)$/);
       if (categoryMatch) {
         const categorySlug = categoryMatch[1];
@@ -109,6 +115,11 @@ export default function App() {
     window.location.hash = `#/post/${postId}`;
   };
 
+  const handleNavigatePrivacy = () => {
+    setSearchQuery("");
+    window.location.hash = "#/privacidade";
+  };
+
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
     if (navState.page !== "home" && query.trim().length > 0) {
@@ -130,7 +141,8 @@ export default function App() {
   const isFullPage =
     navState.page === "login" ||
     navState.page === "editor" ||
-    navState.page === "admin";
+    navState.page === "admin" ||
+    navState.page === "privacidade";
 
   return (
     <div className="bg-[#F9FAFB] text-[#0e1c2e] min-h-screen flex flex-col antialiased">
@@ -208,6 +220,10 @@ export default function App() {
               <AdminPage onNavigateHome={handleNavigateHome} />
             </ProtectedRoute>
           )}
+
+          {navState.page === "privacidade" && (
+            <PrivacyPage onNavigateHome={handleNavigateHome} />
+          )}
         </div>
 
         {!isFullPage && (
@@ -221,7 +237,11 @@ export default function App() {
         )}
       </main>
 
-      <Footer onNavigateHome={handleNavigateHome} onNavigateCategory={handleNavigateCategory} />
+      <Footer
+        onNavigateHome={handleNavigateHome}
+        onNavigateCategory={handleNavigateCategory}
+        onNavigatePrivacy={handleNavigatePrivacy}
+      />
     </div>
   );
 }

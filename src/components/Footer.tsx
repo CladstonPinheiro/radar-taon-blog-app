@@ -11,9 +11,10 @@ import logoImg from "../assets/radar-logo.png";
 interface FooterProps {
   onNavigateHome: () => void;
   onNavigateCategory: (category: Category) => void;
+  onNavigatePrivacy: () => void;
 }
 
-export default function Footer({ onNavigateHome, onNavigateCategory }: FooterProps) {
+export default function Footer({ onNavigateHome, onNavigateCategory, onNavigatePrivacy }: FooterProps) {
   const categories = Object.values(Category);
 
   const handleLogoClick = (e: React.MouseEvent) => {
@@ -74,32 +75,22 @@ export default function Footer({ onNavigateHome, onNavigateCategory }: FooterPro
               onClick={(e) => {
                 e.preventDefault();
                 onNavigateHome();
+                window.scrollTo({ top: 0, behavior: "smooth" });
               }}
               className="hover:text-[#fc7728] transition-colors"
             >
               Início
             </a>
             <a
-              href="#/"
+              href="#/privacidade"
               id="footer-lnk-privacy"
               onClick={(e) => {
                 e.preventDefault();
-                alert(
-                  "Política de Privacidade do Radar Tá On:\nNós respeitamos seus dados. Seus e-mails de cadastro do Alerta de Vagas são utilizados apenas para o envio das novas oportunidades e nunca são repassados a terceiros."
-                );
+                onNavigatePrivacy();
               }}
               className="hover:text-[#fc7728] transition-colors"
             >
               Política de Privacidade
-            </a>
-            <a
-              href="https://www.taonaltiplano.com.br"
-              id="footer-lnk-advertise"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-[#fc7728] transition-colors"
-            >
-              Anuncie no Portal
             </a>
             <a
               href="https://www.taonaltiplano.com.br"
@@ -108,7 +99,7 @@ export default function Footer({ onNavigateHome, onNavigateCategory }: FooterPro
               rel="noopener noreferrer"
               className="hover:text-[#fc7728] transition-colors"
             >
-              Portal de Classificados
+              Portal Tá On Anúncios
             </a>
             <a
               href="#/admin"
