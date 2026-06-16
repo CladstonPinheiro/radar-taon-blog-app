@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ShieldCheck, BadgeCheck, ArrowLeft } from "lucide-react";
+import { useState, FormEvent } from "react";
+import { ShieldCheck, BadgeCheck, ArrowLeft, Send, CheckCircle2, AlertCircle } from "lucide-react";
 
 interface PrivacyPageProps {
   onNavigateHome: () => void;
@@ -36,6 +37,31 @@ const RIGHTS = [
 ];
 
 export default function PrivacyPage({ onNavigateHome }: PrivacyPageProps) {
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setStatus("sending");
+
+    try {
+      const response = await fetch("/api/send-contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha ao enviar");
+      }
+
+      setStatus("sent");
+      setForm({ name: "", email: "", message: "" });
+    } catch {
+      setStatus("error");
+    }
+  };
+
   return (
     <div className="flex-grow flex flex-col w-full">
       {/* Hero band */}
@@ -289,20 +315,72 @@ export default function PrivacyPage({ onNavigateHome }: PrivacyPageProps) {
           </ul>
         </section>
 
-        {/* Bottom CTA */}
-        <div className="bg-[#0e1c2e] rounded-2xl px-6 py-8 text-center flex flex-col items-center gap-3">
-          <h3 className="text-lg font-bold text-white" style={{ fontFamily: "Outfit, sans-serif" }}>
-            Sua privacidade é nossa prioridade
-          </h3>
-          <p className="text-slate-300 text-sm max-w-sm">
-            Dúvidas sobre como tratamos seus dados? Entre em contato.
-          </p>
-          <a
-            href="mailto:privacidade@taonaltiplano.com.br"
-            className="inline-flex items-center gap-2 bg-[#fc7728] hover:bg-[#e05b0d] text-white font-semibold text-sm px-5 py-2.5 rounded-full transition-colors"
-          >
-            Falar sobre privacidade
-          </a>
+        {/* Bottom CTA / contact form */}
+        <div className="bg-[#0e1c2e] rounded-2xl px-6 py-8 flex flex-col items-center gap-4">
+          <div className="text-center flex flex-col gap-1.5">
+            <h3 className="text-lg font-bold text-white" style={{ fontFamily: "Outfit, sans-serif" }}>
+              Sua privacidade é nossa prioridade
+            </h3>
+            <p className="text-slate-300 text-sm max-w-sm mx-auto">
+              Dúvidas sobre como tratamos seus dados? Preencha abaixo e nossa equipe responde por e-mail.
+            </p>
+          </div>
+
+          {status === "sent" ? (
+            <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-400/30 text-emerald-300 text-sm rounded-lg px-4 py-3 max-w-md w-full">
+              <CheckCircle2 className="w-5 h-5 shrink-0" />
+              Mensagem enviada! Nossa equipe vai te responder em breve.
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col gap-3">
+              <input
+                type="text"
+                required
+                placeholder="Seu nome"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full bg-white/10 border border-white/15 rounded-lg py-2.5 px-4 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#fc7728]/40"
+              />
+              <input
+                type="email"
+                required
+                placeholder="Seu e-mail"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="w-full bg-white/10 border border-white/15 rounded-lg py-2.5 px-4 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#fc7728]/40"
+              />
+              <textarea
+                required
+                rows={3}
+                placeholder="Sua mensagem"
+                value={form.message}
+                onChange={(e) => setForm({ ...form, message: e.target.value })}
+                className="w-full bg-white/10 border border-white/15 rounded-lg py-2.5 px-4 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#fc7728]/40 resize-none"
+              />
+
+              {status === "error" && (
+                <div className="flex items-center gap-2 bg-red-500/10 border border-red-400/30 text-red-300 text-xs rounded-lg px-3 py-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  Não foi possível enviar agora. Tente novamente em alguns instantes.
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={status === "sending"}
+                className="inline-flex items-center justify-center gap-2 bg-[#fc7728] hover:bg-[#e05b0d] disabled:opacity-60 text-white font-semibold text-sm px-5 py-2.5 rounded-full transition-colors"
+              >
+                {status === "sending" ? (
+                  "Enviando..."
+                ) : (
+                  <>
+                    Falar sobre privacidade
+                    <Send className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </div>
