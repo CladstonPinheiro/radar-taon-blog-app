@@ -6,6 +6,7 @@
 import React from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { Category, categoryToSlug } from "../types";
+import logoImg from "../assets/radar-logo.png";
 
 interface FooterProps {
   onNavigateHome: () => void;
@@ -30,10 +31,9 @@ export default function Footer({ onNavigateHome, onNavigateCategory }: FooterPro
             href="#/"
             id="footer-logo"
             onClick={handleLogoClick}
-            className="font-headline-lg text-2xl font-black text-white hover:text-blue-100 tracking-tight"
-            style={{ fontFamily: "Outfit, sans-serif" }}
+            className="hover:opacity-90 transition-opacity inline-block"
           >
-            Radar Tá On
+            <img src={logoImg} alt="Radar Tá On" className="h-14 w-auto" />
           </a>
           <p className="text-slate-400 text-sm leading-relaxed">
             Seu portal de notícias, oportunidades e novidades da capital federal.

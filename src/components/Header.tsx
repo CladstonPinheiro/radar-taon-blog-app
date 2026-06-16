@@ -6,6 +6,7 @@
 import React, { useState } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import { Category, categoryToSlug } from "../types";
+import logoImg from "../assets/radar-logo.png";
 
 interface HeaderProps {
   currentCategory: Category | null;
@@ -43,14 +44,13 @@ export default function Header({
           href="#/"
           id="header-logo"
           onClick={handleLogoClick}
-          className="font-headline-lg text-2xl md:text-[32px] font-black text-white tracking-tight hover:opacity-90 transition-opacity whitespace-nowrap"
-          style={{ fontFamily: "Outfit, sans-serif" }}
+          className="hover:opacity-90 transition-opacity whitespace-nowrap shrink-0"
         >
-          Radar Tá On
+          <img src={logoImg} alt="Radar Tá On" className="h-12 md:h-14 w-auto" />
         </a>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-5">
+        <nav className="hidden lg:flex items-center gap-6">
           <a
             href="#/"
             id="nav-home"
@@ -66,27 +66,6 @@ export default function Header({
           >
             Início
           </a>
-          {categories.map((cat, idx) => {
-            const isSelected = currentPage === "category" && currentCategory === cat;
-            return (
-              <a
-                key={cat}
-                id={`nav-cat-${idx}`}
-                href={`#/${categoryToSlug(cat)}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleCategoryClick(cat);
-                }}
-                className={`font-semibold text-xs transition-colors duration-200 pb-1 whitespace-nowrap ${
-                  isSelected
-                    ? "text-[#60a5fa] border-b-2 border-[#60a5fa] font-bold"
-                    : "text-slate-300 hover:text-[#60a5fa]"
-                }`}
-              >
-                {cat}
-              </a>
-            );
-          })}
         </nav>
 
         {/* Action Button CTA */}
@@ -98,7 +77,7 @@ export default function Header({
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-1.5 bg-[#fc7728] hover:bg-[#e05b0d] text-white font-semibold text-sm px-5 py-2.5 rounded-full shadow-sm transition-all duration-200"
           >
-            Voltar ao Portal de Classificados
+            Tá On Negócios
             <ArrowUpRight className="w-4 h-4" />
           </a>
         </div>
@@ -173,7 +152,7 @@ export default function Header({
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center gap-2 bg-[#fc7728] hover:bg-[#e05b0d] text-white font-bold text-center py-3 rounded-lg transition-colors min-h-[44px]"
             >
-              Voltar ao Portal de Classificados
+              Tá On Negócios
               <ArrowUpRight className="w-4 h-4" />
             </a>
           </div>
