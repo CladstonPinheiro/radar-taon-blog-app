@@ -137,8 +137,10 @@ export default function App() {
       <Header
         currentCategory={activeCategoryForHeader}
         currentPage={navState.page}
+        searchQuery={searchQuery}
         onNavigateHome={handleNavigateHome}
         onNavigateCategory={handleNavigateCategory}
+        onSearch={handleSearchChange}
       />
 
       <main
@@ -162,7 +164,7 @@ export default function App() {
               <HomePage
                 posts={posts}
                 searchQuery={searchQuery}
-                onNavigateCategory={handleNavigateCategory}
+         <Header       onNavigateCategory={handleNavigateCategory}
                 onNavigatePost={handleNavigatePost}
               />
             )
