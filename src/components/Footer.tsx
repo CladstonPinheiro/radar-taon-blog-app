@@ -33,7 +33,7 @@ export default function Footer({ onNavigateHome, onNavigateCategory }: FooterPro
             onClick={handleLogoClick}
             className="hover:opacity-90 transition-opacity inline-block"
           >
-            <img src={logoImg} alt="Radar Tá On" className="h-14 w-auto" />
+            <img src={logoImg} alt="Radar Tá On" className="h-20 w-auto" />
           </a>
           <p className="text-slate-400 text-sm leading-relaxed">
             Seu portal de notícias, oportunidades e novidades da capital federal.
