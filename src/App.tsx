@@ -14,7 +14,8 @@ import LoginPage from "./components/LoginPage";
 import EditorPage from "./components/EditorPage";
 import AdminPage from "./components/AdminPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { Category, MOCK_POSTS, slugToCategory, categoryToSlug } from "./types";
+import { fetchPublishedPosts } from "./lib/postsService";
+import { Category, BlogPost, slugToCategory, categoryToSlug } from "./types";
 
 interface NavState {
   page: "home" | "category" | "post" | "login" | "editor" | "admin";
@@ -30,6 +31,18 @@ export default function App() {
   });
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [postsLoading, setPostsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      setPostsLoading(true);
+      const data = await fetchPublishedPosts();
+      setPosts(data);
+      setPostsLoading(false);
+    };
+    loadPosts();
+  }, []);
 
   useEffect(() => {
     const parseHash = () => {
@@ -108,11 +121,11 @@ export default function App() {
       return navState.category;
     }
     if (navState.page === "post" && navState.postId) {
-      const activePost = MOCK_POSTS.find((p) => p.id === navState.postId);
+      const activePost = posts.find((p) => p.id === navState.postId);
       return activePost ? activePost.category : null;
     }
     return null;
-  }, [navState]);
+  }, [navState, posts]);
 
   const isFullPage =
     navState.page === "login" ||
@@ -141,18 +154,24 @@ export default function App() {
           }`}
         >
           {navState.page === "home" && (
-            <HomePage
-              posts={MOCK_POSTS}
-              searchQuery={searchQuery}
-              onNavigateCategory={handleNavigateCategory}
-              onNavigatePost={handleNavigatePost}
-            />
+            postsLoading ? (
+              <div className="flex items-center justify-center py-24 text-[#434655]">
+                Carregando posts...
+              </div>
+            ) : (
+              <HomePage
+                posts={posts}
+                searchQuery={searchQuery}
+                onNavigateCategory={handleNavigateCategory}
+                onNavigatePost={handleNavigatePost}
+              />
+            )
           )}
 
           {navState.page === "category" && navState.category && (
             <CategoryPage
               category={navState.category}
-              posts={MOCK_POSTS}
+              posts={posts}
               onNavigateHome={handleNavigateHome}
               onNavigatePost={handleNavigatePost}
             />
@@ -161,6 +180,7 @@ export default function App() {
           {navState.page === "post" && navState.postId && (
             <PostDetailPage
               postId={navState.postId}
+              posts={posts}
               onNavigateHome={handleNavigateHome}
               onNavigateCategory={handleNavigateCategory}
               onNavigatePost={handleNavigatePost}

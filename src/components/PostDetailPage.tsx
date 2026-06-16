@@ -5,29 +5,29 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, ArrowRight, Calendar, Clock, Share2, Link, Mail, Check, MessageSquare, AlertCircle } from "lucide-react";
-import { BlogPost, MOCK_POSTS } from "../types";
+import { ArrowLeft, ArrowRight, Calendar, Clock, Link, Mail, Check, MessageSquare, AlertCircle } from "lucide-react";
+import { BlogPost, Category } from "../types";
 import CtaAdBox from "./CtaAdBox";
 
 interface PostDetailPageProps {
   postId: string;
+  posts: BlogPost[];
   onNavigateHome: () => void;
-  onNavigateCategory: (category: any) => void;
+  onNavigateCategory: (category: Category) => void;
   onNavigatePost: (postId: string) => void;
 }
 
 export default function PostDetailPage({
   postId,
+  posts,
   onNavigateHome,
   onNavigateCategory,
   onNavigatePost,
 }: PostDetailPageProps) {
   const [copied, setCopied] = useState(false);
 
-  // Find current post
-  const post = MOCK_POSTS.find((p) => p.id === postId);
+  const post = posts.find((p) => p.id === postId);
 
-  // Scroll to top when post changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [postId]);
@@ -50,11 +50,9 @@ export default function PostDetailPage({
     );
   }
 
-  // Get related posts (excluding current post, matching same category)
-  let related = MOCK_POSTS.filter((p) => p.category === post.category && p.id !== post.id).slice(0, 3);
+  let related = posts.filter((p) => p.category === post.category && p.id !== post.id).slice(0, 3);
   if (related.length < 3) {
-    // Fill up with general posts if needed
-    const fillers = MOCK_POSTS.filter((p) => p.id !== post.id && !related.some((r) => r.id === p.id)).slice(0, 3 - related.length);
+    const fillers = posts.filter((p) => p.id !== post.id && !related.some((r) => r.id === p.id)).slice(0, 3 - related.length);
     related = [...related, ...fillers];
   }
 
@@ -98,7 +96,6 @@ export default function PostDetailPage({
       animate="visible"
       className="flex-grow flex flex-col gap-8 font-sans"
     >
-      {/* 1. Back button */}
       <div className="flex justify-between items-center">
         <button
           onClick={() => onNavigateCategory(post.category)}
@@ -110,10 +107,8 @@ export default function PostDetailPage({
         </button>
       </div>
 
-      {/* 2. Article Lead */}
       <article className="bg-white rounded-xl border border-slate-100 p-6 md:p-8 shadow-sm flex flex-col gap-6">
         <header className="flex flex-col gap-4">
-          {/* Post tags bar */}
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => onNavigateCategory(post.category)}
@@ -147,7 +142,6 @@ export default function PostDetailPage({
           </p>
         </header>
 
-        {/* Hero image header */}
         <div className="aspect-[16/9] w-full bg-slate-50 rounded-xl overflow-hidden shadow-xs border border-slate-100 relative">
           <img
             src={post.imageUrl}
@@ -157,12 +151,10 @@ export default function PostDetailPage({
           />
         </div>
 
-        {/* Content paragraphs */}
         <div className="text-slate-700 text-sm md:text-base leading-relaxed space-y-5 whitespace-pre-wrap">
           {post.content}
         </div>
 
-        {/* 3. Embedded Mid-content CTA to classificados portal */}
         <CtaAdBox
           title="Buscando o emprego ideal ou classificados no DF?"
           subtitle="No Tá On Anúncios você encontra as melhores ofertas imobiliárias de Águas Claras, consórcios de veículos, ofertas de serviços locais e vagas de emprego exclusivas no Distrito Federal."
@@ -170,13 +162,11 @@ export default function PostDetailPage({
           isOrange={true}
         />
 
-        {/* 4. Social Sharing bar */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-slate-100 pt-6 mt-4">
           <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
             Gostou desta notícia? Compartilhe com amigos:
           </p>
           <div className="flex flex-wrap gap-2">
-            {/* Copy Link Button */}
             <button
               onClick={handleCopyLink}
               className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-full border transition-all cursor-pointer min-w-[44px] min-h-[44px] ${
@@ -189,7 +179,6 @@ export default function PostDetailPage({
               {copied ? "Copiado!" : "Copiar Link"}
             </button>
 
-            {/* WA button */}
             <button
               onClick={() => handleShareClick("whatsapp")}
               className="inline-flex items-center justify-center p-2 rounded-full border border-slate-200 text-green-600 hover:bg-green-50 transition-colors cursor-pointer min-w-[44px] min-h-[44px]"
@@ -198,7 +187,6 @@ export default function PostDetailPage({
               <MessageSquare className="w-4 h-4" />
             </button>
 
-            {/* Send mail button */}
             <button
               onClick={() => handleShareClick("email")}
               className="inline-flex items-center justify-center p-2 rounded-full border border-slate-200 text-[#004ac6] hover:bg-blue-50 transition-colors cursor-pointer min-w-[44px] min-h-[44px]"
@@ -210,10 +198,8 @@ export default function PostDetailPage({
         </div>
       </article>
 
-      {/* Recurrent Ad Campaign Box (as asked: "Anuncie grátis no Tá On Anúncios") */}
       <CtaAdBox isOrange={false} />
 
-      {/* 5. Related Posts Section ("Notícias Relacionadas") */}
       <section className="flex flex-col gap-4 mt-2">
         <h2
           className="font-headline-md text-lg md:text-2xl font-bold text-[#0e1c2e]"
