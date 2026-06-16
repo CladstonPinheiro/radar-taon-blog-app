@@ -164,7 +164,7 @@ export default function App() {
               <HomePage
                 posts={posts}
                 searchQuery={searchQuery}
-         <Header       onNavigateCategory={handleNavigateCategory}
+                onNavigateCategory={handleNavigateCategory}
                 onNavigatePost={handleNavigatePost}
               />
             )

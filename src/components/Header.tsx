@@ -10,7 +10,7 @@ import logoImg from "../assets/radar-logo.png";
 
 interface HeaderProps {
   currentCategory: Category | null;
-  currentPage: "home" | "category" | "post";
+  currentPage: "home" | "category" | "post" | "login" | "editor" | "admin";
   searchQuery: string;
   onNavigateHome: () => void;
   onNavigateCategory: (category: Category) => void;
