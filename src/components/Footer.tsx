@@ -20,7 +20,6 @@ export default function Footer({ onNavigateHome, onNavigateCategory, onNavigateP
   const handleLogoClick = (e: React.MouseEvent) => {
     e.preventDefault();
     onNavigateHome();
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -75,7 +74,6 @@ export default function Footer({ onNavigateHome, onNavigateCategory, onNavigateP
               onClick={(e) => {
                 e.preventDefault();
                 onNavigateHome();
-                window.scrollTo({ top: 0, behavior: "smooth" });
               }}
               className="hover:text-[#fc7728] transition-colors"
             >
