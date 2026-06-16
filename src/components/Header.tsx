@@ -91,7 +91,7 @@ export default function Header({
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-1.5 bg-[#fc7728] hover:bg-[#e05b0d] text-white font-semibold text-sm px-5 py-2.5 rounded-full shadow-sm transition-all duration-200 whitespace-nowrap"
           >
-            Tá On Negócios
+            Ir para o Tá On Negócios
             <ArrowUpRight className="w-4 h-4" />
           </a>
         </div>
@@ -177,7 +177,7 @@ export default function Header({
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center gap-2 bg-[#fc7728] hover:bg-[#e05b0d] text-white font-bold text-center py-3 rounded-lg transition-colors min-h-[44px]"
             >
-              Tá On Negócios
+              Ir para o Tá On Negócios
               <ArrowUpRight className="w-4 h-4" />
             </a>
           </div>
